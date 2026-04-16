@@ -72,13 +72,18 @@
             width: 100%;
             height: 2px;
             background: linear-gradient(to right, transparent, rgba(192, 108, 132, 0.15), transparent);
-            animation: crt-scan 0.8s linear infinite;
+            animation: crt-scan 8s linear infinite;
             box-shadow: 0 0 5px 1px rgba(192, 108, 132, 0.15);
         }
 
         @keyframes crt-scan {
             0% { top: 0; opacity: 1; }
             100% { top: 100%; opacity: 0.3; }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
 
         .vignette {
@@ -323,7 +328,7 @@
                     <th>FILENAME</th>
                     <th>SIZE</th>
                     <th>TIMESTAMP</th>
-                    <th>SIGNATURE</th>
+                    <th>VERSION</th>
                 </tr>
             </thead>
             <tbody id="release-table-body">
@@ -384,6 +389,7 @@
                 setTimeout(() => {
                     bootScreen.style.display = 'none';
                     mainInterface.style.display = 'block';
+                    mainInterface.style.animation = 'fadeIn 0.8s ease-out';
                 }, 800);
             }
         }
@@ -423,7 +429,7 @@
                 data.assets.forEach(asset => {
                     const sizeMB = (asset.size / (1024 * 1024)).toFixed(1) + ' MB';
                     const date = new Date(asset.updated_at).toISOString().replace('T', ' ').substring(0, 19);
-                    const sigHex = Math.abs(asset.id).toString(16).substring(0, 4).toUpperCase();
+                    const version = data.tag_name;
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -432,7 +438,7 @@
                         </td>
                         <td>${sizeMB}</td>
                         <td>${date}</td>
-                        <td>0x${sigHex.padStart(4, '0')}...VALID</td>
+                        <td>${version} (LATEST)</td>
                     `;
                     tbody.appendChild(tr);
                 });
