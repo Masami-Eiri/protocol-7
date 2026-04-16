@@ -14,11 +14,12 @@
         }
 
         :root {
-            --bg: #0a0a0a;
+            --bg: #000000;
             --fg: #c0c0c0;
-            --accent: #00ff00;
-            --accent-dim: #003300;
-            --border: #303030;
+            --accent: #c06c84;
+            --accent-bright: #d4899f;
+            --accent-dim: rgba(192, 108, 132, 0.3);
+            --border: #2a2a2a;
         }
 
         body {
@@ -41,8 +42,8 @@
                     0deg,
                     transparent,
                     transparent 2px,
-                    rgba(0, 255, 0, 0.03) 2px,
-                    rgba(0, 255, 0, 0.03) 4px
+                    rgba(192, 108, 132, 0.03) 2px,
+                    rgba(192, 108, 132, 0.03) 4px
                 );
             pointer-events: none;
             z-index: 1000;
@@ -84,120 +85,7 @@
             font-weight: 700;
             letter-spacing: 20px;
             margin-bottom: 20px;
-            text-shadow:
-                0 0 10px var(--accent),
-                0 0 20px var(--accent),
-                0 0 40px var(--accent);
-            animation: flicker 4s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            92% { opacity: 1; }
-            93% { opacity: 0.8; }
-            94% { opacity: 1; }
-            96% { opacity: 0.9; }
-            97% { opacity: 1; }
-        }
-
-        .subtitle {
-            font-size: 12px;
-            letter-spacing: 8px;
-            color: #606060;
-            text-transform: uppercase;
-        }
-
-        .divider {
-            width: 200px;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--accent), transparent);
-            margin: 40px auto;
-        }
-
-        .terminal {
-            background: #0d0d0d;
-            border: 1px solid var(--border);
-            padding: 30px;
-            margin: 40px 0;
             position: relative;
-        }
-
-        .terminal::before {
-            content: "root@protocol7:~#";
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: var(--bg);
-            padding: 0 10px;
-            font-size: 11px;
-            color: var(--accent);
-        }
-
-        .terminal p {
-            line-height: 1.8;
-            margin-bottom: 15px;
-        }
-
-        .terminal p:last-child {
-            margin-bottom: 0;
-        }
-
-        .prompt {
-            color: var(--accent);
-        }
-
-        .comment {
-            color: #505050;
-        }
-
-        .highlight {
-            color: var(--accent);
-            text-shadow: 0 0 5px var(--accent);
-        }
-
-        .links {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 60px 0;
-            flex-wrap: wrap;
-        }
-
-        .link-card {
-            border: 1px solid var(--border);
-            padding: 20px 40px;
-            text-decoration: none;
-            color: var(--fg);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .link-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .link-card:hover::before {
-            left: 100%;
-        }
-
-        .link-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
-        }
-
-        .link-card span {
-            font-size: 10px;
-            color: #505050;
-            display: block;
-            margin-top: 5px;
         }
 
         .glitch {
@@ -241,6 +129,125 @@
             75% { transform: translate(2px, 2px); }
         }
 
+        .subtitle {
+            font-size: 12px;
+            letter-spacing: 8px;
+            color: #606060;
+            text-transform: uppercase;
+        }
+
+        .divider {
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent), transparent);
+            margin: 40px auto;
+        }
+
+        .terminal {
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .terminal::before {
+            content: "root@protocol7:~#";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg);
+            padding: 0 10px;
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        .terminal p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .terminal p:last-child {
+            margin-bottom: 0;
+        }
+
+        .prompt {
+            color: var(--accent);
+        }
+
+        .comment {
+            color: #505050;
+        }
+
+        .highlight {
+            color: var(--accent-bright);
+        }
+
+        .typed-text {
+            border-right: 2px solid var(--accent);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .link-card {
+            border: 1px solid var(--border);
+            padding: 20px 40px;
+            text-decoration: none;
+            color: var(--fg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .link-card:hover::before {
+            left: 100%;
+        }
+
+        .link-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-dim);
+        }
+
+        .link-card span {
+            font-size: 10px;
+            color: #505050;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .download-card {
+            border-color: var(--accent);
+        }
+
+        .download-card .version {
+            font-size: 11px;
+            color: var(--accent);
+            margin-top: 8px;
+        }
+
         footer {
             text-align: center;
             margin-top: 80px;
@@ -280,7 +287,7 @@
     <div class="container">
         <header>
             <h1 class="glitch" data-text="PROTOCOL 7">PROTOCOL 7</h1>
-            <p class="subtitle">Kills of the Eastern Calculus</p>
+            <p class="subtitle">Knights of the Eastern Calculus</p>
         </header>
 
         <div class="divider"></div>
@@ -288,16 +295,11 @@
         <div class="terminal">
             <p><span class="prompt">$</span> <span class="comment"># Establishing protocol layers...</span></p>
             <p><span class="prompt">$</span> cat /proc/self/status</p>
-            <p>NAME: Protocol 7<br>
-            TYPE: Synchronization Layer<br>
-            STATUS: <span class="highlight">ACTIVE</span><br>
-            LAYERS: 7 (Physical → Network → Data → Session → Transport → Presentation → Application)</p>
+            <p class="typed-text" id="status-output"></p>
             <p><span class="prompt">$</span> <span class="comment"># The Wired is not a place. It's a protocol.</span></p>
             <p><span class="prompt">$</span> <span class="comment"># Everyone is always connected.</span></p>
             <p><span class="prompt">$</span> sync --all --resonance=schumann</p>
-            <p style="color: var(--accent);">[<span class="highlight">OK</span>] Layer 0-7 synchronized<br>
-            [<span class="highlight">OK</span>] Barrier collapsed<br>
-            [<span class="highlight">OK</span>] Universal connection established</p>
+            <p style="color: var(--accent);" class="typed-text" id="sync-output"></p>
         </div>
 
         <div class="links">
@@ -305,9 +307,10 @@
                 GitHub
                 <span>SOURCE CODE</span>
             </a>
-            <a href="https://github.com/Masami-Eiri/protocol-7/releases" class="link-card">
-                Releases
-                <span>DOWNLOAD</span>
+            <a href="#" id="download-btn" class="link-card download-card">
+                Download
+                <span>LATEST RELEASE</span>
+                <div class="version" id="version-display"></div>
             </a>
         </div>
 
@@ -316,5 +319,66 @@
             <p class="coordinates">35.6762° N, 139.6503° E // TOKYO, JAPAN</p>
         </footer>
     </div>
+
+    <script>
+        const statusLines = [
+            "NAME: Protocol 7",
+            "TYPE: Synchronization Layer",
+            "STATUS: <span class='highlight'>ACTIVE</span>",
+            "LAYERS: 7 (Physical → Network → Data → Session → Transport → Presentation → Application)"
+        ];
+
+        const syncLines = [
+            "[<span class='highlight'>OK</span>] Layer 0-7 synchronized",
+            "[<span class='highlight'>OK</span>] Barrier collapsed",
+            "[<span class='highlight'>OK</span>] Universal connection established"
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        let currentLines = statusLines;
+        let outputEl = document.getElementById('status-output');
+
+        function typeText() {
+            if (lineIndex < currentLines.length) {
+                const line = currentLines[lineIndex];
+                if (charIndex < line.length) {
+                    outputEl.innerHTML += line[charIndex];
+                    charIndex++;
+                    setTimeout(typeText, 20);
+                } else {
+                    outputEl.innerHTML += "<br>";
+                    lineIndex++;
+                    charIndex = 0;
+                    if (lineIndex < currentLines.length) {
+                        setTimeout(typeText, 100);
+                    } else {
+                        setTimeout(() => {
+                            lineIndex = 0;
+                            currentLines = syncLines;
+                            outputEl = document.getElementById('sync-output');
+                            typeText();
+                        }, 500);
+                    }
+                }
+            }
+        }
+
+        setTimeout(typeText, 500);
+
+        fetch('https://api.github.com/repos/Masami-Eiri/protocol-7/releases/latest')
+            .then(r => r.json())
+            .then(data => {
+                const version = data.tag_name;
+                document.getElementById('version-display').textContent = version;
+                const asset = data.assets.find(a => a.name.endsWith('.AppImage'));
+                if (asset) {
+                    document.getElementById('download-btn').href = asset.browser_download_url;
+                }
+            })
+            .catch(() => {
+                document.getElementById('download-btn').href = 'https://github.com/Masami-Eiri/protocol-7/releases';
+            });
+    </script>
 </body>
 </html>
