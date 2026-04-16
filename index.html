@@ -3,382 +3,485 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROTOCOL 7</title>
+    <title>navi://protocol7.node - The Wired</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
 
         :root {
-            --bg: #000000;
-            --fg: #c0c0c0;
-            --accent: #c06c84;
-            --accent-bright: #d4899f;
-            --accent-dim: rgba(192, 108, 132, 0.3);
-            --border: #2a2a2a;
+            --bg-color: #000000;
+            --text-color: #c06c84;
+            --dim-text: #8a4d5c;
+            --alert-color: #ff3344;
+            --glow: 0 0 10px rgba(192, 108, 132, 0.5);
+            --font-main: 'Share Tech Mono', 'Courier New', Courier, monospace;
+            --font-title: 'VT323', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--fg);
-            font-family: 'JetBrains Mono', monospace;
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
             overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        body::before {
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+                        linear-gradient(90deg, rgba(192, 108, 132, 0.08), rgba(192, 108, 132, 0.04), rgba(192, 108, 132, 0.08));
+            background-size: 100% 4px, 4px 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .bright-scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 2px,
+                rgba(192, 108, 132, 0.03) 2px,
+                rgba(192, 108, 132, 0.03) 4px
+            );
+            z-index: 101;
+            pointer-events: none;
+        }
+
+        .bright-scanline::before {
             content: "";
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background:
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(192, 108, 132, 0.03) 2px,
-                    rgba(192, 108, 132, 0.03) 4px
-                );
-            pointer-events: none;
-            z-index: 1000;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(192, 108, 132, 0.15), transparent);
+            animation: crt-scan 0.8s linear infinite;
+            box-shadow: 0 0 5px 1px rgba(192, 108, 132, 0.15);
         }
 
-        .scanline {
+        @keyframes crt-scan {
+            0% { top: 0; opacity: 1; }
+            100% { top: 100%; opacity: 0.3; }
+        }
+
+        .vignette {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(to bottom, transparent, var(--accent-dim), transparent);
-            animation: scan 8s linear infinite;
-            opacity: 0.5;
-            z-index: 1001;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);
+            z-index: 99;
             pointer-events: none;
         }
 
-        @keyframes scan {
-            0% { top: -4px; }
-            100% { top: 100%; }
+        .flicker {
+            animation: crt-flicker 0.15s infinite;
         }
 
-        .container {
+        @keyframes crt-flicker {
+            0% { opacity: 0.95; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        #boot-screen {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            text-shadow: var(--glow);
+            z-index: 50;
+            max-width: 90%;
+            white-space: pre-wrap;
+        }
+
+        #main-interface {
+            display: none;
+            width: 100%;
             max-width: 900px;
-            margin: 0 auto;
-            padding: 60px 20px;
+            padding: 2rem;
+            border: 1px solid var(--dim-text);
+            background: rgba(10, 0, 5, 0.85);
+            backdrop-filter: blur(3px);
+            box-shadow: inset 0 0 20px rgba(80, 20, 30, 0.5), 0 0 15px rgba(192, 108, 132, 0.1);
+            z-index: 10;
             position: relative;
-            z-index: 1;
         }
 
         header {
-            text-align: center;
-            margin-bottom: 80px;
+            border-bottom: 2px solid var(--dim-text);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
         h1 {
-            font-size: 72px;
-            font-weight: 700;
-            letter-spacing: 20px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .glitch {
-            position: relative;
-        }
-
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .glitch::before {
-            animation: glitch1 2s infinite linear alternate-reverse;
-            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-            color: #ff0000;
-        }
-
-        .glitch::after {
-            animation: glitch2 3s infinite linear alternate-reverse;
-            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-            color: #00ffff;
-        }
-
-        @keyframes glitch1 {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-        }
-
-        @keyframes glitch2 {
-            0%, 100% { transform: translate(0); }
-            25% { transform: translate(2px, -2px); }
-            50% { transform: translate(-2px, 2px); }
-            75% { transform: translate(2px, 2px); }
-        }
-
-        .subtitle {
-            font-size: 12px;
-            letter-spacing: 8px;
-            color: #606060;
+            font-family: var(--font-title);
+            font-size: 3rem;
+            text-shadow: var(--glow);
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
-        .divider {
-            width: 200px;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--accent), transparent);
-            margin: 40px auto;
+        .sys-info {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--dim-text);
         }
 
-        .terminal {
-            background: #0a0a0a;
-            border: 1px solid var(--border);
-            padding: 30px;
-            margin: 40px 0;
+        .quote-block {
+            margin-bottom: 2rem;
+            font-style: italic;
+            border-left: 4px solid var(--text-color);
+            padding-left: 1rem;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .directory {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .directory th {
+            text-align: left;
+            border-bottom: 1px dashed var(--dim-text);
+            padding: 0.5rem;
+            color: var(--dim-text);
+            font-weight: normal;
+        }
+
+        .directory td {
+            padding: 0.8rem 0.5rem;
+            border-bottom: 1px solid rgba(150, 77, 92, 0.3);
+        }
+
+        .directory tr:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            text-shadow: none;
+        }
+
+        .directory tr:hover td {
+            border-bottom-color: transparent;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        a.glitch-link {
             position: relative;
+            font-weight: bold;
         }
 
-        .terminal::before {
-            content: "root@protocol7:~#";
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: var(--bg);
-            padding: 0 10px;
-            font-size: 11px;
-            color: var(--accent);
+        .directory tr:hover a.glitch-link {
+            color: var(--bg-color);
         }
 
-        .terminal p {
-            line-height: 1.8;
-            margin-bottom: 15px;
-            overflow: hidden;
+        .tag {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border: 1px solid currentColor;
+            margin-left: 10px;
         }
 
-        .terminal p:last-child {
-            margin-bottom: 0;
-        }
-
-        .prompt {
-            color: var(--accent);
-        }
-
-        .comment {
-            color: #505050;
-        }
-
-        .highlight {
-            color: var(--accent-bright);
-        }
-
-        .typed-text {
-            border-right: 2px solid var(--accent);
+        .tag.new {
+            color: var(--bg-color);
+            background-color: var(--text-color);
             animation: blink 1s step-end infinite;
         }
 
+        .directory tr:hover .tag.new {
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
         @keyframes blink {
-            50% { border-color: transparent; }
+            50% { opacity: 0; }
         }
 
-        .links {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 60px 0;
-            flex-wrap: wrap;
+        .phantom-zone {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.75rem;
+            opacity: 0.02;
+            transition: opacity 2s, color 0.5s;
+            z-index: 9999;
         }
 
-        .link-card {
-            border: 1px solid var(--border);
-            padding: 20px 40px;
+        .phantom-zone:hover {
+            opacity: 1;
+            color: var(--alert-color);
+            text-shadow: 0 0 10px var(--alert-color);
+        }
+
+        .phantom-zone a {
+            color: inherit;
             text-decoration: none;
-            color: var(--fg);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .link-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
-            transition: left 0.5s ease;
+        .cryptic {
+            color: rgba(0, 0, 0, 0.01);
+            user-select: text;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            line-height: 1;
         }
 
-        .link-card:hover::before {
-            left: 100%;
-        }
-
-        .link-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-dim);
-        }
-
-        .link-card span {
-            font-size: 10px;
-            color: #505050;
-            display: block;
-            margin-top: 5px;
-        }
-
-        .download-card {
-            border-color: var(--accent);
-        }
-
-        .download-card .version {
-            font-size: 11px;
-            color: var(--accent);
-            margin-top: 8px;
+        .cryptic::selection {
+            background: var(--text-color);
+            color: var(--bg-color);
         }
 
         footer {
+            margin-top: 3rem;
             text-align: center;
-            margin-top: 80px;
-            padding-top: 40px;
-            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--dim-text);
+            border-top: 1px dashed var(--dim-text);
+            padding-top: 1rem;
         }
 
-        footer p {
-            font-size: 10px;
-            color: #404040;
-            letter-spacing: 4px;
-        }
-
-        .coordinates {
-            font-size: 11px;
-            color: #404040;
-            margin-top: 20px;
-            letter-spacing: 2px;
-        }
-
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             h1 {
-                font-size: 36px;
-                letter-spacing: 10px;
+                font-size: 2rem;
             }
 
-            .links {
-                flex-direction: column;
-                align-items: center;
+            .sys-info {
+                display: none;
+            }
+
+            .directory th:nth-child(3),
+            .directory td:nth-child(3) {
+                display: none;
             }
         }
     </style>
 </head>
-<body>
-    <div class="scanline"></div>
+<body class="flicker">
+    <div class="scanlines"></div>
+    <div class="bright-scanline"></div>
+    <div class="vignette"></div>
 
-    <div class="container">
-        <header>
-            <h1 class="glitch" data-text="PROTOCOL 7">PROTOCOL 7</h1>
-            <p class="subtitle">Knights of the Eastern Calculus</p>
-        </header>
-
-        <div class="divider"></div>
-
-        <div class="terminal">
-            <p><span class="prompt">$</span> <span class="comment"># Establishing protocol layers...</span></p>
-            <p><span class="prompt">$</span> cat /proc/self/status</p>
-            <p class="typed-text" id="status-output"></p>
-            <p><span class="prompt">$</span> <span class="comment"># The Wired is not a place. It's a protocol.</span></p>
-            <p><span class="prompt">$</span> <span class="comment"># Everyone is always connected.</span></p>
-            <p><span class="prompt">$</span> sync --all --resonance=schumann</p>
-            <p style="color: var(--accent);" class="typed-text" id="sync-output"></p>
-        </div>
-
-        <div class="links">
-            <a href="https://github.com/Masami-Eiri/protocol-7" class="link-card">
-                GitHub
-                <span>SOURCE CODE</span>
-            </a>
-            <a href="#" id="download-btn" class="link-card download-card">
-                Download
-                <span>LATEST RELEASE</span>
-                <div class="version" id="version-display"></div>
-            </a>
-        </div>
-
-        <footer>
-            <p>EST. 2026 // LAYER 7 PROTOCOL</p>
-            <p class="coordinates">35.6762° N, 139.6503° E // TOKYO, JAPAN</p>
-        </footer>
+    <div class="phantom-zone">
+        <a href="https://github.com/Masami-Eiri/protocol-7" target="_blank">//wired.open</a>
     </div>
 
+    <div id="boot-screen"></div>
+
+    <main id="main-interface">
+        <header>
+            <div>
+                <h1>PROTOCOL 7</h1>
+                <p>Knights of the Eastern Calculus</p>
+            </div>
+            <div class="sys-info">
+                NODE: 192.168.x.x<br>
+                ENC: RSA-4096 / KNIGHTS_BYPASS<br>
+                USER: MASAMI-EIRI
+            </div>
+        </header>
+
+        <p class="cryptic">Tk0114: 彼女はただの患者じゃない。彼女は...</p>
+
+        <div class="quote-block">
+            "The Wired is not a place. It's a protocol.<br>
+            No matter where you are, everyone is always connected."<br>
+            <span style="font-size: 0.8rem; color: var(--dim-text);">-- Masami Eiri</span>
+        </div>
+
+        <p>AVAILABLE PHARMA-CODE / PROTOCOL7 RELEASES:</p>
+
+        <table class="directory">
+            <thead>
+                <tr>
+                    <th>FILENAME</th>
+                    <th>SIZE</th>
+                    <th>TIMESTAMP</th>
+                    <th>SIGNATURE</th>
+                </tr>
+            </thead>
+            <tbody id="release-table-body">
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--dim-text);">
+                        [ ESTABLISHING CONNECTION TO REPOSITORY... ]
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <footer>
+            <span>PROTOCOL 7 // LAYER 7</span>
+            <span>Let's all love Lain.</span>
+        </footer>
+    </main>
+
     <script>
-        const statusLines = [
-            "NAME: Protocol 7",
-            "TYPE: Synchronization Layer",
-            "STATUS: <span class='highlight'>ACTIVE</span>",
-            "LAYERS: 7 (Physical → Network → Data → Session → Transport → Presentation → Application)"
+        const bootText = [
+            "Copland OS Enterprise v9.0.2",
+            "Initializing hardware...",
+            "Loading memory modules... OK",
+            "Establishing connection to The Wired...",
+            "Tk0112: 彼女が何を考えているのか、全く分からない。",
+            "WARNING: Unregistered protocol detected.",
+            "Bypassing Knights firewall protocols...",
+            "Decrypting subsystem...",
+            "Dc1056: 肉体って、本当は邪魔なのかな。",
+            "Dc1059: ここには誰もいない。私しかいない。",
+            "PROTOCOL7 distribution directory found.",
+            "Handshake complete.",
+            "..."
         ];
 
-        const syncLines = [
-            "[<span class='highlight'>OK</span>] Layer 0-7 synchronized",
-            "[<span class='highlight'>OK</span>] Barrier collapsed",
-            "[<span class='highlight'>OK</span>] Universal connection established"
-        ];
+        const bootScreen = document.getElementById('boot-screen');
+        const mainInterface = document.getElementById('main-interface');
+        let currentLine = 0;
 
-        let lineIndex = 0;
-        let charIndex = 0;
-        let currentLines = statusLines;
-        let outputEl = document.getElementById('status-output');
+        function typeLine() {
+            if (currentLine < bootText.length) {
+                const line = document.createElement('div');
+                bootScreen.appendChild(line);
 
-        function typeText() {
-            if (lineIndex < currentLines.length) {
-                const line = currentLines[lineIndex];
-                if (charIndex < line.length) {
-                    outputEl.innerHTML += line[charIndex];
+                let charIndex = 0;
+                const text = bootText[currentLine];
+
+                const typing = setInterval(() => {
+                    line.textContent += text.charAt(charIndex);
                     charIndex++;
-                    setTimeout(typeText, 20);
-                } else {
-                    outputEl.innerHTML += "<br>";
-                    lineIndex++;
-                    charIndex = 0;
-                    if (lineIndex < currentLines.length) {
-                        setTimeout(typeText, 100);
-                    } else {
-                        setTimeout(() => {
-                            lineIndex = 0;
-                            currentLines = syncLines;
-                            outputEl = document.getElementById('sync-output');
-                            typeText();
-                        }, 500);
+
+                    if (charIndex >= text.length) {
+                        clearInterval(typing);
+                        currentLine++;
+                        setTimeout(typeLine, Math.random() * 300 + 100);
                     }
-                }
+                }, 15);
+            } else {
+                setTimeout(() => {
+                    bootScreen.style.display = 'none';
+                    mainInterface.style.display = 'block';
+                }, 800);
             }
         }
 
-        setTimeout(typeText, 500);
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('skipBoot') === 'true') {
+                document.getElementById('boot-screen').style.display = 'none';
+                document.getElementById('main-interface').style.display = 'block';
+            } else {
+                typeLine();
+            }
 
-        fetch('https://api.github.com/repos/Masami-Eiri/protocol-7/releases/latest')
-            .then(r => r.json())
-            .then(data => {
-                const version = data.tag_name;
-                document.getElementById('version-display').textContent = version;
-                const asset = data.assets.find(a => a.name.endsWith('.AppImage'));
-                if (asset) {
-                    document.getElementById('download-btn').href = asset.browser_download_url;
+            fetchLatestReleases();
+        };
+
+        async function fetchLatestReleases() {
+            const tbody = document.getElementById('release-table-body');
+            try {
+                const response = await fetch('https://api.github.com/repos/Masami-Eiri/protocol-7/releases/latest', {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('NO_RELEASES');
+                    }
+                    throw new Error('API connection failed');
                 }
-            })
-            .catch(() => {
-                document.getElementById('download-btn').href = 'https://github.com/Masami-Eiri/protocol-7/releases';
+
+                const data = await response.json();
+                tbody.innerHTML = '';
+
+                if (!data.assets || data.assets.length === 0) {
+                    throw new Error('NO_ASSETS');
+                }
+
+                data.assets.forEach(asset => {
+                    const sizeMB = (asset.size / (1024 * 1024)).toFixed(1) + ' MB';
+                    const date = new Date(asset.updated_at).toISOString().replace('T', ' ').substring(0, 19);
+                    const sigHex = Math.abs(asset.id).toString(16).substring(0, 4).toUpperCase();
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <a href="${asset.browser_download_url}" class="glitch-link" data-text="${asset.name}">${asset.name}</a>
+                        </td>
+                        <td>${sizeMB}</td>
+                        <td>${date}</td>
+                        <td>0x${sigHex.padStart(4, '0')}...VALID</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                applyGlitchEffects();
+
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem;">
+                    [ ERR: CONNECTION TO SHADOW NODE SEVERED ]
+                </td></tr>`;
+            }
+        }
+
+        function applyGlitchEffects() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*()";
+            const glitchLinks = document.querySelectorAll('.glitch-link');
+
+            glitchLinks.forEach(link => {
+                let interval = null;
+
+                link.onmouseover = event => {
+                    let iteration = 0;
+                    clearInterval(interval);
+
+                    interval = setInterval(() => {
+                        event.target.innerText = event.target.innerText
+                            .split("")
+                            .map((letter, index) => {
+                                if (index < iteration) {
+                                    return event.target.dataset.text[index];
+                                }
+                                return letters[Math.floor(Math.random() * letters.length)];
+                            })
+                            .join("");
+
+                        if (iteration >= event.target.dataset.text.length) {
+                            clearInterval(interval);
+                        }
+
+                        iteration += 1 / 3;
+                    }, 30);
+                };
+
+                link.onmouseleave = event => {
+                    clearInterval(interval);
+                    event.target.innerText = event.target.dataset.text;
+                };
             });
+        }
     </script>
 </body>
 </html>
