@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROTOCOL 7</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --fg: #c0c0c0;
+            --accent: #00ff00;
+            --accent-dim: #003300;
+            --border: #303030;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to bottom, transparent, var(--accent-dim), transparent);
+            animation: scan 8s linear infinite;
+            opacity: 0.5;
+            z-index: 1001;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: -4px; }
+            100% { top: 100%; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        h1 {
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: 20px;
+            margin-bottom: 20px;
+            text-shadow:
+                0 0 10px var(--accent),
+                0 0 20px var(--accent),
+                0 0 40px var(--accent);
+            animation: flicker 4s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            96% { opacity: 0.9; }
+            97% { opacity: 1; }
+        }
+
+        .subtitle {
+            font-size: 12px;
+            letter-spacing: 8px;
+            color: #606060;
+            text-transform: uppercase;
+        }
+
+        .divider {
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent), transparent);
+            margin: 40px auto;
+        }
+
+        .terminal {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .terminal::before {
+            content: "root@protocol7:~#";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg);
+            padding: 0 10px;
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        .terminal p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .terminal p:last-child {
+            margin-bottom: 0;
+        }
+
+        .prompt {
+            color: var(--accent);
+        }
+
+        .comment {
+            color: #505050;
+        }
+
+        .highlight {
+            color: var(--accent);
+            text-shadow: 0 0 5px var(--accent);
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .link-card {
+            border: 1px solid var(--border);
+            padding: 20px 40px;
+            text-decoration: none;
+            color: var(--fg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .link-card:hover::before {
+            left: 100%;
+        }
+
+        .link-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .link-card span {
+            font-size: 10px;
+            color: #505050;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+            color: #ff0000;
+        }
+
+        .glitch::after {
+            animation: glitch2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+            color: #00ffff;
+        }
+
+        @keyframes glitch1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch2 {
+            0%, 100% { transform: translate(0); }
+            25% { transform: translate(2px, -2px); }
+            50% { transform: translate(-2px, 2px); }
+            75% { transform: translate(2px, 2px); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        footer p {
+            font-size: 10px;
+            color: #404040;
+            letter-spacing: 4px;
+        }
+
+        .coordinates {
+            font-size: 11px;
+            color: #404040;
+            margin-top: 20px;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 36px;
+                letter-spacing: 10px;
+            }
+
+            .links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="PROTOCOL 7">PROTOCOL 7</h1>
+            <p class="subtitle">Kills of the Eastern Calculus</p>
+        </header>
+
+        <div class="divider"></div>
+
+        <div class="terminal">
+            <p><span class="prompt">$</span> <span class="comment"># Establishing protocol layers...</span></p>
+            <p><span class="prompt">$</span> cat /proc/self/status</p>
+            <p>NAME: Protocol 7<br>
+            TYPE: Synchronization Layer<br>
+            STATUS: <span class="highlight">ACTIVE</span><br>
+            LAYERS: 7 (Physical → Network → Data → Session → Transport → Presentation → Application)</p>
+            <p><span class="prompt">$</span> <span class="comment"># The Wired is not a place. It's a protocol.</span></p>
+            <p><span class="prompt">$</span> <span class="comment"># Everyone is always connected.</span></p>
+            <p><span class="prompt">$</span> sync --all --resonance=schumann</p>
+            <p style="color: var(--accent);">[<span class="highlight">OK</span>] Layer 0-7 synchronized<br>
+            [<span class="highlight">OK</span>] Barrier collapsed<br>
+            [<span class="highlight">OK</span>] Universal connection established</p>
+        </div>
+
+        <div class="links">
+            <a href="https://github.com/Masami-Eiri/protocol-7" class="link-card">
+                GitHub
+                <span>SOURCE CODE</span>
+            </a>
+            <a href="https://github.com/Masami-Eiri/protocol-7/releases" class="link-card">
+                Releases
+                <span>DOWNLOAD</span>
+            </a>
+        </div>
+
+        <footer>
+            <p>EST. 2026 // LAYER 7 PROTOCOL</p>
+            <p class="coordinates">35.6762° N, 139.6503° E // TOKYO, JAPAN</p>
+        </footer>
+    </div>
+</body>
+</html>
